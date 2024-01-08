@@ -1,0 +1,1976 @@
+grf {
+ grfid: "EN\0E\01";
+ name: string(STR_GRF_NAME);
+ desc: string(STR_GRF_DESC);
+ version: 5;
+ min_compatible_version: 0;
+ param {
+  PARAM_CONST {
+   type: int;
+   name: string(STR_MSC);
+   desc: string(STR_CON_DESC);
+   min_value: 0;
+   max_value: 4;
+   def_value: 2;
+   names: {
+    0: string(STR_MC_0);
+    1: string(STR_MC_1);
+    2: string(STR_MC_2);
+    3: string(STR_MC_3);
+    4: string(STR_MC_4);
+   };
+  }
+ }
+ param {
+  PARAM_MAINT {
+   type: int;
+   name: string(STR_MSM);
+   desc: string(STR_MAINT_DESC);
+   min_value: 0;
+   max_value: 4;
+   def_value: 2;
+   names: {
+    0: string(STR_MC_0);
+    1: string(STR_MC_1);
+    2: string(STR_MC_2);
+    3: string(STR_MC_3);
+    4: string(STR_MC_4);
+   };
+  }
+ }
+ param {
+  PARAM_STYLE {
+   type: int;
+   name: string(STR_PARAM_STYLE);
+   desc: string(STR_PARAM_STYLE_DESC);
+   min_value: 0;
+   max_value: 2;
+   def_value: 0;
+   names: {
+    0: string(STR_PARAM_STYLE_0);
+    1: string(STR_PARAM_STYLE_1);
+    2: string(STR_PARAM_STYLE_2);
+   };
+  }
+ }
+ param {
+  PARAM_ELEC {
+   type: int;
+   name: string(STR_PARAM_ELEC);
+   desc: string(STR_PARAM_ELEC_DESC);
+   min_value: 0;
+   max_value: 2;
+   def_value: 0;
+   names: {
+    0: string(STR_PARAM_ELEC_0);
+    1: string(STR_PARAM_ELEC_1);
+    2: string(STR_PARAM_ELEC_2);
+   };
+  }
+ }
+ param {
+  PARAM_GAUGE {
+   type: int;
+   name: string(STR_PARAM_GAUGE);
+   desc: string(STR_PARAM_GAUGE_DESC);
+   min_value: 0;
+   max_value: 4;
+   def_value: 0;
+   names: {
+    0: string(STR_PARAM_GAUGE_0);
+    1: string(STR_PARAM_GAUGE_1);
+    2: string(STR_PARAM_GAUGE_2);
+    3: string(STR_PARAM_GAUGE_3);
+    4: string(STR_PARAM_GAUGE_4);
+   };
+  }
+ }
+ param {
+  PARAM_ISR {
+   type: bool;
+   name: string(STR_PARAM_ISR);
+   desc: string(STR_PARAM_ISR_DESC);
+   def_value: 1;
+  }
+ }
+ param {
+  PARAM_CHIPS_C {
+   type: bool;
+   name: string(STR_PARAM_CHIPS_C);
+   desc: string(STR_PARAM_CHIPS_C_DESC);
+   def_value: 1;
+  }
+ }
+ param {
+  PARAM_CHIPS_D {
+   type: bool;
+   name: string(STR_PARAM_CHIPS_D);
+   desc: string(STR_PARAM_CHIPS_D_DESC);
+   def_value: 1;
+  }
+ }
+ param {
+  PARAM_CHIPS_A {
+   type: bool;
+   name: string(STR_PARAM_CHIPS_A);
+   desc: string(STR_PARAM_CHIPS_A_DESC);
+   def_value: 1;
+  }
+ }
+ param {
+  PARAM_FENCE {
+   type: bool;
+   name: string(STR_PARAM_FENCE);
+   desc: string(STR_PARAM_FENCE_DESC);
+   def_value: 0;
+  }
+ }
+ param {
+  PARAM_SPEED {
+   type: bool;
+   name: string(STR_PARAM_SPEED);
+   desc: string(STR_PARAM_SPEED_DESC);
+   def_value: 0;
+  }
+ }
+}
+/* $Id$ */
+/*
+ * This file is part of the Swedish RailSet.
+ * Swedish RailSet is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
+ * Swedish RailSet is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with Swedish RailSet. If not, see <http://www.gnu.org/licenses/>.
+ */
+// Default ground tile template (re-use as needed)
+template ground_tile(x, y) { [x, y, 64, 31, -31, 0, 9] }
+// track_type underlays
+template tmpl_underlay_straight() {
+ [ 75, 0, 64,31, -31, 0]
+ [ 0, 0, 64,31, -31, 0]
+}
+template tmpl_underlay_slope() {
+ [ 75, 40, 64,39, -31, -8]
+ [150, 40, 64,23, -31, 0]
+ [225, 40, 64,23, -31, 0]
+ [300, 40, 64,39, -31, -8]
+}
+template tmpl_underlay_slope_U() {
+ [ 75, 40, 64,39, -31, -8]
+ [150, 40, 64,23, -31, 0]
+ [225, 40, 64,23, -31, 0]
+ [300, 40, 64,39, -32, -8]
+}
+template tmpl_underlay_diagonal() {
+ [150, 0, 64,31, -31, 0]
+ [225, 0, 64,31, -31, 0]
+ [ 0, 40, 64,31, -31, 0]
+ [300, 0, 64,31, -31, 0]
+}
+template tmpl_underlay_track_types() {
+ tmpl_underlay_straight()
+ tmpl_underlay_diagonal()
+ tmpl_underlay_slope()
+ // x - crossing
+ [ 0,120, 64,31, -31, 0]
+ // underlay for crossings w/o tracks
+ [ 0, 80, 64,31, -31, 0]
+ [225, 80, 64,31, -31, 0]
+ [150, 80, 64,31, -31, 0]
+ [ 75, 80, 64,31, -31, 0]
+ [300, 80, 64,31, -31, 0]
+}
+template tmpl_underlay_track_types_U() {//Urban
+ tmpl_underlay_straight()
+ tmpl_underlay_diagonal()
+ tmpl_underlay_slope_U()
+ // x - crossing
+ [ 0,120, 64,31, -31, 0]
+ // underlay for crossings w/o tracks
+ [ 0, 80, 64,31, -31, 0]
+ [225, 80, 64,31, -31, 0]
+ [150, 80, 64,31, -31, 0]
+ [ 75, 80, 64,31, -31, 0]
+ [300, 80, 64,31, -31, 0]
+}
+template tmpl_overlay_straight_EDS() {
+ [ 0,155, 42,23, -19-2, 5-1]
+ [ 50,155, 42,23, -19, 5-1]
+}
+template tmpl_overlay_slopes_EDS() {
+ [ 0,195, 64,39, -31, -8]
+ [ 75,195, 64,23, -31, 0]
+ [150,195, 64,23, -31, 0]
+ [225,195, 64,39, -32, -9]
+}
+template tmpl_overlay_diagonal_EDS() {
+ [97,155, 46, 8, -19-3, 4-1]
+ [150,155, 48, 8, -19-4, 20-1]
+ [200,155, 12,21, 11, 6-1]
+ [250,155, 12,21, -21, 6-1]
+}
+// track_type overlays_EDS
+template tmpl_overlay_track_types_EDS() {
+    tmpl_overlay_straight_EDS()
+    tmpl_overlay_diagonal_EDS()
+    tmpl_overlay_slopes_EDS()
+}
+template tmpl_overlay_straight() {
+ [ 0,155, 40,23, -19, 5]
+ [ 50,155, 40,23, -19, 5]
+}
+template tmpl_overlay_slopes() {
+ [ 0,195, 64,39, -31, -8]
+ [ 75,195, 64,23, -31, 0]
+ [150,195, 64,23, -31, 0]
+ [225,195, 64,39, -32, -9]
+}
+template tmpl_overlay_diagonal() {
+ [100,155, 40, 7, -19, 4]
+ [150,155, 40, 7, -19, 20]
+ [200,155, 12,19, 11, 6]
+ [250,155, 12,19, -21, 6]
+}
+// track_type overlays
+template tmpl_overlay_track_types() {
+    tmpl_overlay_straight()
+    tmpl_overlay_diagonal()
+    tmpl_overlay_slopes()
+}
+template tmpl_bridges_underlay() {
+ tmpl_underlay_straight()
+ tmpl_underlay_slope()
+ tmpl_underlay_diagonal()
+}
+// bridge surface overlays
+template tmpl_bridges_overlay() {
+//    tmpl_overlay_straight()
+//    tmpl_overlay_slopes()
+//    tmpl_overlay_diagonal()
+ tmpl_bridges_underlay()
+}
+// track_type tunnel tracks
+template tmpl_tunnel_tracks() {
+ [ 75, 0, 64,31, -31, 0]
+ [ 0, 0, 64,31, -31, 0]
+ [ 75, 0, 64,31, -31, 0]
+ [ 0, 0, 64,31, -31, 0]
+}
+// track_type level crossings
+template tmpl_level_crossing_track_types_empty() {
+ [ 0,155, 40,21, -20, 5]
+ [ 50,155, 40,21, -20, 5]
+ [ 0,240, 10,10, 0, 0]
+ [ 0,240, 10,10, 0, 0]
+ [ 0,240, 10,10, 0, 0]
+ [ 0,240, 10,10, 0, 0]
+ [ 0,240, 10,10, 0, 0]
+ [ 0,240, 10,10, 0, 0]
+ [ 0,240, 10,10, 0, 0]
+ [ 0,240, 10,10, 0, 0]
+}
+template tmpl_rails_crossing(x,y) {
+ [ x, y, 45,23, -21, 4]
+ [x+49, y, 45,23, -22, 4]
+}
+template tmpl_level_crossing_track_types_open(y) {
+    tmpl_rails_crossing(0, 0)
+ [ 0, 0, 1,1, 0, 0]
+ [ 0, y, 5,23, -5, -16]
+ [20, y, 5,23, -6, -21]
+ [ 0, 0, 1,1, 0, 0]
+ [40, y, 5,23, 3, -18]
+ [ 0, 0, 1,1, 0, 0]
+ [ 0, 0, 1,1, 0, 0]
+ [60, y, 5,23, 1, -22]
+}
+template tmpl_level_crossing_track_types_none(y) {
+ [ 75, 0, 64,31, -31, 0]
+ [ 0, 0, 64,31, -31, 0]
+ [ 0, 0, 1,1, 0, 0]
+ [ 0, 0, 1,1, 0, 0]
+ [ 0, 0, 1,1, 0, 0]
+ [ 0, 0, 1,1, 0, 0]
+ [ 0, 0, 1,1, 0, 0]
+ [ 0, 0, 1,1, 0, 0]
+ [ 0, 0, 1,1, 0, 0]
+ [ 0, 0, 1,1, 0, 0]
+}
+template tmpl_level_crossing_track_types_closed(y) {
+    tmpl_rails_crossing(0, 0)
+ [ 0, 0, 1,1, 0, 0]
+ [ 0, y, 19,19, -5, -7]
+ [20, y, 19,19, -20, -12]
+ [ 0, 0, 1,1, 0, 0]
+ [40, y, 19,19, 3, -7]
+ [ 0, 0, 1,1, 0, 0]
+ [ 0, 0, 1,1, 0, 0]
+ [60, y, 19,19, -13, -11]
+}
+//japanese tracks
+template tmpl_rails_crossing_jp(x,y) {
+ [ x, y, 47,24, -22, 4]
+ [x+48, y, 47,24, -23, 4]
+}
+template tmpl_level_crossing_track_types_jp(y) {
+    tmpl_rails_crossing_jp(0, 0)
+ [ 0, y, 20,20, -14, -8, ANIM]//n
+ [21, y, 20,20, -3, -7, ANIM]
+ [ 0, y, 20,20, -20, -11, ANIM]////e
+ [21, y, 20,20, -8, -10, ANIM]
+ [ 0, y, 20,20, -11, -10, ANIM]//w
+ [21, y, 20,20, 3, -10, ANIM]
+ [ 0, y, 20,20, -17, -13, ANIM]//s
+ [21, y, 20,20, -2, -13, ANIM]
+}
+// fences
+template tmpl_fences(y) {
+//fence drawing on diagonals is and has always been broken, the fences on both sides really need to be moved apart 4 px horizontally and 2 px vertically (1 "TTD unit", see also:
+//	- https://www.tt-forums.net/viewtopic.php?f=26&t=61584
+//	- https://bugs.openttd.org/task/5309
+// need to move both sides half of that to compensate, or (todo) write a patch
+// commented offsets are perfect for the front fence on diagonals
+//	[  0,  y, 33,22, -30,  -6]
+ [ 0, y, 33,22, -32, -7]
+//	[ 48,  y, 33,22,  -2,  -6]
+ [ 48, y, 33,22, 0, -7]
+ [ 93, y, 8,32, -3, -19] // verticals are OK as-is
+ [112, y, 65, 9, -32, -10] // same for horizontals
+//	[192,  y, 33,15, -29,  -7]
+ [192, y, 33,15, -31, -8]
+//	[240,  y, 33,15,  -1,  -7]
+ [240, y, 33,15, 1, -8]
+//	[288,  y, 33,30, -30, -14]
+ [288, y, 33,30, -32, -15]
+//	[350,  y, 33,30,  -2, -14]
+ [350, y, 33,30, 0, -15]
+}
+// gui
+template tmpl_gui() {
+ [ 0, 0, 20, 20, 0, 0]
+ [ 25, 0, 20, 20, 0, 0]
+ [ 50, 0, 20, 20, 0, 0]
+ [ 75, 0, 20, 20, 0, 0]
+ [100, 0, 20, 20, 0, 0]
+ [125, 0, 20, 20, 0, 0]
+ [150, 0, 20, 20, 0, 0]
+ [175, 0, 20, 20, 0, 0]
+ [200, 0, 32, 32, 0, 0]
+ [250, 0, 32, 32, 0, 0]
+ [300, 0, 32, 32, 0, 0]
+ [350, 0, 32, 32, 0, 0]
+ [400, 0, 32, 32, 0, 0]
+ [450, 0, 32, 32, 0, 0]
+ [500, 0, 32, 32, 0, 0]
+ [550, 0, 32, 32, 0, 0]
+}
+template tmpl_tunnel_overlaytracks(y) {
+ [ 0, y, 64, 39, -7-24, -8]
+ [65, y, 64, 39, -9-7-13-2, -3-14+1]
+ [130, y, 64, 39, -26-7+2, -3-14+1]
+ [195, y, 64, 39, -19-12, -8]
+}
+ template tmpl_tunnel_overlays(y) {
+ [ 0, y, 64, 39, -7-24, -38]
+ [65, y, 64, 39, -9-7-13-2, -33-14+1]
+ [130, y, 64, 39, -26-7+2, -33-14+1]
+ [195, y, 64, 39, -19-12, -38]
+}
+template tmpl_no_fences() {
+ [ 0, 0, 1, 1, 0, 0]
+ [ 0, 0, 1, 1, 0, 0]
+ [ 0, 0, 1, 1, 0, 0]
+ [ 0, 0, 1, 1, 0, 0]
+ [ 0, 0, 1, 1, 0, 0]
+ [ 0, 0, 1, 1, 0, 0]
+ [ 0, 0, 1, 1, 0, 0]
+ [ 0, 0, 1, 1, 0, 0]
+}
+template tmpl_depot(x) {
+ [65, 96+2*x, 64,47+x, -9-22, -31+11-x]
+ [65, 0, 64,47+x, -9, -31-x]
+ [ 0, 96+2*x, 64,47+x, -53+22, -31+11-x]
+ [ 0, 0, 64,47+x, -53, -31-x]
+ [ 0, 48+x, 64,47+x, -53, -31-x]
+ [65, 48+x, 64,47+x, -9, -31-x]
+}
+// Catenary stuff from Auztracks
+/**********************************************
+//Catenarypylons
+ **********************************************/
+//Catenarypylons
+template template_catenarydoublepylons() {
+    //[left_x, upper_y, width, height, offset_x, offset_y]
+ [ 4, 28, 14, 32, -11, -30]
+ [ 20, 17, 40, 43, 1, -41]
+ [ 62, 28, 14, 32, -1, -30]
+ [ 78, 17, 40, 43, -39, -41]
+ [ 120, 28, 14, 32, -6, -31]
+ [ 136, 16, 14, 44, -6, -42]
+ [ 152, 28, 28, 32, 0, -31]
+ [ 181, 28, 27, 32, -26, -31]
+}
+/**********************************************
+//Catenarywires
+ **********************************************/
+template template_catenarywires() {
+    //[left_x, upper_y, width, height, offset_x, offset_y]
+ [ 10, 100, 64, 42, -45, -20]
+ [ 100, 100, 64, 42, -17, -20]
+ [ 200, 100, 32, 11, 0, -12] //-1
+ [ 300, 100, 1, 21, 0, -8] //0
+ [ 10, 200, 64, 50, -45, -21]
+ [ 100, 200, 64, 34, -17, -10]
+ [ 200, 200, 64, 34, -45, -10]
+ [ 300, 200, 64, 50, -17, -21]
+ [ 10, 300, 64, 42, -45, -20]
+ [ 100, 300, 64, 42, -17, -20]
+ [ 200, 300, 32, 11, 0, -12]
+ [ 300, 300, 1, 21, 0, -8] //0
+ [ 10, 400, 64, 50, -45, -21]
+ [ 100, 400, 64, 34, -17, -10]
+ [ 200, 400, 64, 34, -45, -10]
+ [ 300, 400, 64, 50, -17, -21]
+ [ 10, 500, 64, 42, -45, -20]
+ [ 100, 500, 64, 42, -17, -20]
+ [ 200, 500, 32, 11, 0, -12]
+ [ 300, 500, 1, 21, 0, -8] //0
+ [ 10, 600, 64, 50, -45, -21]
+ [ 100, 600, 64, 34, -17, -10]
+ [ 200, 600, 64, 34, -45, -10]
+ [ 300, 600, 64, 50, -17, -21]
+ [ 10, 700, 64, 42, -45, -20]
+ [ 100, 700, 64, 42, -17, -20]
+ [ 200, 700, 64, 42, -45, -20]
+ [ 300, 700, 64, 42, -17, -20]
+}
+// Catenary stuff from Auztracks
+/**********************************************
+//Catenarypylons
+ **********************************************/
+template template_nopylons() {
+    //[left_x, upper_y, width, height, offset_x, offset_y]
+ [1, 1, 1, 1, 1, 1]
+ [1, 1, 1, 1, 1, 1]
+ [1, 1, 1, 1, 1, 1]
+ [1, 1, 1, 1, 1, 1]
+ [1, 1, 1, 1, 1, 1]
+ [1, 1, 1, 1, 1, 1]
+ [1, 1, 1, 1, 1, 1]
+ [1, 1, 1, 1, 1, 1]
+}
+template template_metroroof() {
+    //[left_x, upper_y, width, height, offset_x, offset_y]
+ //Single tile
+ [0, 0, 64, 31+8, -32-16+3, -20+15]
+ [65, 48, 64, 31+8, -32+16-1, -20+15]
+ [130, 32+8, 64, 31, -32+16-1, -20+15]
+ [0, 32+8, 64, 31, -32-16+1, -20+15-1]
+ //Single tile sloped
+ [65, 0, 64, 39+8, -32-13, -20+14]
+ [130, 0, 64, 23+8, -32+15, -20+24]
+ [195, 0, 64, 23+8, -32-13, -20+24]
+ [260, 0, 64, 39+8, -32+15, -20+14]
+ //Multitile
+ [0, 0, 64, 31+8, -32-16+3, -20+15]
+ [65, 48, 64, 31+8, -32+16-1, -20+15]
+ [130, 32+8, 64, 31, -32+16-1, -20+15]
+ [0, 32+8, 64, 31, -32-16+1, -20+15-1]
+ //Multitile
+ [65, 0, 64, 39+8, -32-13, -20+14]
+ [130, 0, 64, 23+8, -32+15, -20+24]
+ [195, 0, 64, 23+8, -32-13, -20+24]
+ [260, 0, 64, 39+8, -32+15, -20+14]
+ //Multitile
+ [0, 0, 64, 31+8, -32-16+3, -20+15]
+ [65, 48, 64, 31+8, -32+16-1, -20+15]
+ [130, 32+8, 64, 31, -32+16-1, -20+15]
+ [0, 32+8, 64, 31, -32-16+1, -20+15-1]
+ //Multitile
+ [65, 0, 64, 39+8, -32-13, -20+14]
+ [130, 0, 64, 23+8, -32+15, -20+24]
+ [195, 0, 64, 23+8, -32-13, -20+24]
+ [260, 0, 64, 39+8, -32+15, -20+14]
+ [1, 1, 1, 1, 1, 1]
+ [1, 1, 1, 1, 1, 1]
+ [1, 1, 1, 1, 1, 1]
+ [1, 1, 1, 1, 1, 1]
+}
+//Courtesy of Emperor Jake I guess
+//Catenary Poles Modern style
+//maybe re-add urban poles in future
+template japan_rails_pylons() {
+ [ 0, 100, 10, 19, -8, -19]
+ [ 16, 100, 9, 21, 0, -21]
+ [ 32, 100, 10, 19, 0, -19]
+ [ 48, 100, 9, 21, -7, -21]
+ [ 64, 100, 3, 18, 0, -19]
+ [ 80, 100, 3, 21, 0, -21]
+ [ 96, 100, 10, 19, -2, -17]
+ [ 112, 100, 10, 19, -7, -15]
+}
+//Catenary Wires
+template japan_rails_wires() {
+ [0, 0, 32, 20, -29, -6]
+ [48, 0, 32, 20, -1, -6]
+ [96, 0, 32, 5, -1, -6]
+ [144, 0, 1, 20, 0, -7]
+ [160, 0, 32, 28, -29, -6]
+ [208, 0, 32, 13, -1, 2]
+ [256, 0, 32, 13, -29, 2]
+ [304, 0, 32, 18, -1, -6]
+ [352, 0, 32, 19, -29, -5]
+ [400, 0, 32, 19, -1, -5]
+ [448, 0, 32, 5, -1, -6]
+ [496, 0, 1, 20, 0, -7]
+ [512, 0, 32, 27, -29, -5]
+ [560, 0, 32, 12, -1, 3]
+ [608, 0, 32, 12, -29, 3]
+ [656, 0, 32, 27, -1, -5]
+ [704, 0, 32, 20, -29, -6]
+ [0, 50, 32, 20, -1, -6]
+ [48, 50, 32, 5, -1, -6]
+ [96, 50, 1, 20, 0, -7]
+ [112, 50, 32, 28, -29, -6]
+ [160, 50, 32, 13, -1, 2]
+ [208, 50, 32, 13, -29, 2]
+ [256, 50, 32, 28, -1, -6]
+ [304, 50, 16, 11, -29, 3]
+ [336, 50, 16, 12, -1, -6]
+ [368, 50, 16, 12, -13, -6]
+ [400, 50, 16, 11, 15, 3]
+}
+//----------------- Standard gauge
+//Unelectrified
+//Electrified
+//3rd Rail
+//----------------- Narrow gauge
+//Unelectrified
+//Electrified
+//------------------- Dual gauge
+//Unelectrified
+//Electrified
+//Compatibility	
+
+spriteset (ISR_N_gui, "grf/ISR_N_GUI.png") {
+ tmpl_gui()
+}
+spriteset (ISR_E_gui, "grf/ISR_E_GUI.png") {
+ tmpl_gui()
+}
+spriteset (CHIPS_A_N_gui, "grf/CHIPS_A_N_GUI.png") {
+ tmpl_gui()
+}
+spriteset (CHIPS_A_E_gui, "grf/CHIPS_A_E_GUI.png") {
+ tmpl_gui()
+}
+spriteset (CHIPS_C_N_gui, "grf/CHIPS_C_N_GUI.png") {
+ tmpl_gui()
+}
+spriteset (CHIPS_C_E_gui, "grf/CHIPS_C_E_GUI.png") {
+ tmpl_gui()
+}
+spriteset (CHIPS_D_N_gui, "grf/CHIPS_D_N_GUI.png") {
+ tmpl_gui()
+}
+spriteset (CHIPS_D_E_gui, "grf/CHIPS_D_E_GUI.png") {
+ tmpl_gui()
+}
+//Fuck it, I'll do catenary here as well
+spriteset(spriteset_jp_wires, "grf/catwire.png") {
+ japan_rails_wires()
+}
+spriteset(spriteset_jp_poles, "grf/catpoles.png") {
+ japan_rails_pylons()
+}
+spriteset(spriteset_kp_wires, "grf/SBAD_WIRE.png") {
+ template_catenarywires()
+}
+spriteset(spriteset_kp_poles, "grf/SBAD_PYLON.png") {
+ template_catenarydoublepylons()
+}
+switch(FEAT_RAILTYPES, SELF, switch_wires,PARAM_STYLE) {
+ 2: spriteset_kp_wires;
+ spriteset_jp_wires;
+}
+switch(FEAT_RAILTYPES, SELF, switch_poles,PARAM_STYLE) {
+ 2: spriteset_kp_poles;
+ spriteset_jp_poles;
+}
+//and crossings
+spriteset(KP_S_cross_open, "grf/KPS_CROSS.png") {
+ tmpl_level_crossing_track_types_open(24)
+}
+spriteset(KP_S_cross_closed, "grf/KPS_CROSS.png") {
+ tmpl_level_crossing_track_types_closed(48)
+}
+switch(FEAT_RAILTYPES, SELF, KP_S_cross, level_crossing_status) {
+ LEVEL_CROSSING_CLOSED: KP_S_cross_closed;
+ KP_S_cross_open;
+}
+spriteset(KP_N_cross_open, "grf/KPN_CROSS.png") {
+ tmpl_level_crossing_track_types_open(24)
+}
+spriteset(KP_N_cross_closed, "grf/KPN_CROSS.png") {
+ tmpl_level_crossing_track_types_closed(48)
+}
+switch(FEAT_RAILTYPES, SELF, KP_N_cross, level_crossing_status) {
+ LEVEL_CROSSING_CLOSED: KP_N_cross_closed;
+ KP_N_cross_open;
+}
+spriteset(KP_D_cross_open, "grf/KPD_CROSS.png") {
+ tmpl_level_crossing_track_types_open(24)
+}
+spriteset(KP_D_cross_closed, "grf/KPD_CROSS.png") {
+ tmpl_level_crossing_track_types_closed(48)
+}
+switch(FEAT_RAILTYPES, SELF, KP_D_cross, level_crossing_status) {
+ LEVEL_CROSSING_CLOSED: KP_D_cross_closed;
+ KP_D_cross_open;
+}
+spriteset(JP_S_cross_open, "grf/JPS_CROSS.png") {
+ tmpl_level_crossing_track_types_jp(25)
+}
+spriteset(JP_S_cross_closed, "grf/JPS_CROSS.png") {
+ tmpl_level_crossing_track_types_jp(46)
+}
+switch(FEAT_RAILTYPES, SELF, JP_S_cross, level_crossing_status) {
+ LEVEL_CROSSING_CLOSED: JP_S_cross_closed;
+ JP_S_cross_open;
+}
+spriteset(JP_N_cross_open, "grf/JPN_CROSS.png") {
+ tmpl_level_crossing_track_types_jp(25)
+}
+spriteset(JP_N_cross_closed, "grf/JPN_CROSS.png") {
+ tmpl_level_crossing_track_types_jp(46)
+}
+switch(FEAT_RAILTYPES, SELF, JP_N_cross, level_crossing_status) {
+ LEVEL_CROSSING_CLOSED: JP_N_cross_closed;
+ JP_N_cross_open;
+}
+spriteset(JP_F_cross_open, "grf/JPF_CROSS.png") {
+ tmpl_level_crossing_track_types_jp(25)
+}
+spriteset(JP_F_cross_closed, "grf/JPF_CROSS.png") {
+ tmpl_level_crossing_track_types_jp(46)
+}
+switch(FEAT_RAILTYPES, SELF, JP_F_cross, level_crossing_status) {
+ LEVEL_CROSSING_CLOSED: JP_F_cross_closed;
+ JP_F_cross_open;
+}
+spriteset(JP_D_cross_open, "grf/JPD_CROSS.png") {
+ tmpl_level_crossing_track_types_jp(25)
+}
+spriteset(JP_D_cross_closed, "grf/JPD_CROSS.png") {
+ tmpl_level_crossing_track_types_jp(46)
+}
+switch(FEAT_RAILTYPES, SELF, JP_D_cross, level_crossing_status) {
+ LEVEL_CROSSING_CLOSED: JP_D_cross_closed;
+ JP_D_cross_open;
+}
+switch(FEAT_RAILTYPES, SELF, switch_cross_S,PARAM_STYLE) {
+ 2: KP_S_cross;
+ 1: JP_N_cross;
+ JP_S_cross;
+}
+switch(FEAT_RAILTYPES, SELF, switch_cross_N,PARAM_STYLE) {
+ 2: KP_N_cross;
+ 1: JP_F_cross;
+ JP_N_cross;
+}
+switch(FEAT_RAILTYPES, SELF, switch_cross_D,PARAM_STYLE) {
+ 2: KP_D_cross;
+ JP_D_cross;
+}
+spriteset (NO_fences, "grf/ISR_DPRK_S.png") {
+ tmpl_no_fences()
+}
+//DPRK
+spriteset (SU1N_DPRK_underlay, "grf/ISR_DPRK_S.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (SU1N_DPRK_overlay, "grf/ISR_DPRK_S.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (SU1N_DPRK_bridge, "grf/ISR_DPRK_S.png") {
+ tmpl_bridges_overlay()
+}
+//JP
+spriteset (SU1N_JP_underlay, "grf/ISR_JP_S.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (SU1N_JP_overlay, "grf/ISR_JP_S.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (SU1N_JP_bridge, "grf/ISR_JP_S.png") {
+ tmpl_bridges_overlay()
+}
+//Univ
+switch(FEAT_RAILTYPES, SELF, switch_SU1N_underlay,PARAM_STYLE) {
+ 2: SU1N_DPRK_underlay;
+ 1: NU1N_JP_underlay;
+ SU1N_JP_underlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_SU1N_overlay,PARAM_STYLE) {
+ 2: SU1N_DPRK_overlay;
+ 1: NU1N_JP_overlay;
+ SU1N_JP_overlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_SU1N_bridge,PARAM_STYLE) {
+ 2: SU1N_DPRK_bridge;
+ 1: NU1N_JP_bridge;
+ SU1N_JP_bridge;
+}
+if(PARAM_ISR == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 2) && (PARAM_GAUGE != 1 && PARAM_GAUGE != 4)){
+item(FEAT_RAILTYPES, SU1N_ID, 0) {
+     property {
+         label: "SU1N";
+         name: string(STR_SU1N);
+         menu_text: string(STR_SU1N);
+         build_window_caption: string(STR_SU1N_BUILD_CAPTION);
+         autoreplace_text: string(STR_SU1N_AUTOREPLACE);
+         new_engine_text: string(STR_SU1N_NEW_ENGINE);
+   toolbar_caption: string(STR_SU1N_TB_CAPTION);
+         compatible_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x0B;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 8/4 : (PARAM_CONST == 1) ? 8/2 : (PARAM_CONST == 3) ? 8*2 : (PARAM_CONST == 4) ? 8*4 : 8;
+   maintenance_cost: (PARAM_MAINT == 0) ? 8/4 : (PARAM_MAINT == 1) ? 8/2 : (PARAM_MAINT == 3) ? 8*2 : (PARAM_MAINT == 4) ? 8*4 : 8;
+   sort_order: 0xA0;
+     }
+     graphics {
+         track_overlay: switch_SU1N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_SU1N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_S; // defines the usual tracks for crosings
+         bridge_surfaces: switch_SU1N_bridge; // defines the overlay drawn over bridges
+   gui: ISR_N_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+     }
+ }
+ }
+//DPRK
+spriteset (SU2N_DPRK_underlay, "grf/CHIPS_C_DPRK_S.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (SU2N_DPRK_overlay, "grf/CHIPS_C_DPRK_S.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (SU2N_DPRK_bridge, "grf/CHIPS_C_DPRK_S.png") {
+ tmpl_bridges_overlay()
+}
+//JP
+spriteset (SU2N_JP_underlay, "grf/CHIPS_C_JP_S.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (SU2N_JP_overlay, "grf/CHIPS_C_JP_S.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (SU2N_JP_bridge, "grf/CHIPS_C_JP_S.png") {
+ tmpl_bridges_overlay()
+}
+//Univ
+switch(FEAT_RAILTYPES, SELF, switch_SU2N_underlay,PARAM_STYLE) {
+ 2: SU2N_DPRK_underlay;
+ 1: NU2N_JP_underlay;
+ SU2N_JP_underlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_SU2N_overlay,PARAM_STYLE) {
+ 2: SU2N_DPRK_overlay;
+ 1: NU2N_JP_overlay;
+ SU2N_JP_overlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_SU2N_bridge,PARAM_STYLE) {
+ 2: SU2N_DPRK_bridge;
+ 1: NU2N_JP_bridge;
+ SU2N_JP_bridge;
+}
+if(PARAM_CHIPS_C == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 2) && (PARAM_GAUGE != 1 && PARAM_GAUGE != 4)){
+item(FEAT_RAILTYPES, SU2N_ID, 1) {
+     property {
+         label: "SU2N";
+         name: string(STR_SU2N);
+         menu_text: string(STR_SU2N);
+         build_window_caption: string(STR_SU2N_BUILD_CAPTION);
+         autoreplace_text: string(STR_SU2N_AUTOREPLACE);
+         new_engine_text: string(STR_SU2N_NEW_ENGINE);
+   toolbar_caption: string(STR_SU2N_TB_CAPTION);
+         compatible_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x0B;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 8/4 : (PARAM_CONST == 1) ? 8/2 : (PARAM_CONST == 3) ? 8*2 : (PARAM_CONST == 4) ? 8*4 : 8;
+   maintenance_cost: (PARAM_MAINT == 0) ? 8/4 : (PARAM_MAINT == 1) ? 8/2 : (PARAM_MAINT == 3) ? 8*2 : (PARAM_MAINT == 4) ? 8*4 : 8;
+   sort_order: 0xA6;
+     }
+     graphics {
+         track_overlay: switch_SU2N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_SU2N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_S; // defines the usual tracks for crosings
+         bridge_surfaces: switch_SU2N_bridge; // defines the overlay drawn over bridges
+   gui: CHIPS_C_N_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+     }
+ }
+ }
+//DPRK
+spriteset (SU3N_DPRK_underlay, "grf/CHIPS_D_DPRK_S.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (SU3N_DPRK_overlay, "grf/CHIPS_D_DPRK_S.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (SU3N_DPRK_bridge, "grf/CHIPS_D_DPRK_S.png") {
+ tmpl_bridges_overlay()
+}
+//JP
+spriteset (SU3N_JP_underlay, "grf/CHIPS_D_JP_S.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (SU3N_JP_overlay, "grf/CHIPS_D_JP_S.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (SU3N_JP_bridge, "grf/CHIPS_D_JP_S.png") {
+ tmpl_bridges_overlay()
+}
+//Univ
+switch(FEAT_RAILTYPES, SELF, switch_SU3N_underlay,PARAM_STYLE) {
+ 2: SU3N_DPRK_underlay;
+ 1: NU3N_JP_underlay;
+ SU3N_JP_underlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_SU3N_overlay,PARAM_STYLE) {
+ 2: SU3N_DPRK_overlay;
+ 1: NU3N_JP_overlay;
+ SU3N_JP_overlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_SU3N_bridge,PARAM_STYLE) {
+ 2: SU3N_DPRK_bridge;
+ 1: NU3N_JP_bridge;
+ SU3N_JP_bridge;
+}
+if(PARAM_CHIPS_D == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 2) && (PARAM_GAUGE != 1 && PARAM_GAUGE != 4)){
+item(FEAT_RAILTYPES, SU3N_ID, 2) {
+     property {
+         label: "SU3N";
+         name: string(STR_SU3N);
+         menu_text: string(STR_SU3N);
+         build_window_caption: string(STR_SU3N_BUILD_CAPTION);
+         autoreplace_text: string(STR_SU3N_AUTOREPLACE);
+         new_engine_text: string(STR_SU3N_NEW_ENGINE);
+   toolbar_caption: string(STR_SU3N_TB_CAPTION);
+         compatible_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x0B;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 8/4 : (PARAM_CONST == 1) ? 8/2 : (PARAM_CONST == 3) ? 8*2 : (PARAM_CONST == 4) ? 8*4 : 8;
+   maintenance_cost: (PARAM_MAINT == 0) ? 8/4 : (PARAM_MAINT == 1) ? 8/2 : (PARAM_MAINT == 3) ? 8*2 : (PARAM_MAINT == 4) ? 8*4 : 8;
+   sort_order: 0xAC;
+     }
+     graphics {
+         track_overlay: switch_SU3N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_SU3N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_S; // defines the usual tracks for crosings
+         bridge_surfaces: switch_SU3N_bridge; // defines the overlay drawn over bridges
+   gui: CHIPS_D_N_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+     }
+ }
+ }
+//DPRK
+spriteset (SU4N_DPRK_underlay, "grf/CHIPS_A_DPRK_S.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (SU4N_DPRK_overlay, "grf/CHIPS_A_DPRK_S.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (SU4N_DPRK_bridge, "grf/CHIPS_A_DPRK_S.png") {
+ tmpl_bridges_overlay()
+}
+//JP
+spriteset (SU4N_JP_underlay, "grf/CHIPS_A_JP_S.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (SU4N_JP_overlay, "grf/CHIPS_A_JP_S.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (SU4N_JP_bridge, "grf/CHIPS_A_JP_S.png") {
+ tmpl_bridges_overlay()
+}
+//Univ
+switch(FEAT_RAILTYPES, SELF, switch_SU4N_underlay,PARAM_STYLE) {
+ 2: SU4N_DPRK_underlay;
+ 1: NU4N_JP_underlay;
+ SU4N_JP_underlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_SU4N_overlay,PARAM_STYLE) {
+ 2: SU4N_DPRK_overlay;
+ 1: NU4N_JP_overlay;
+ SU4N_JP_overlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_SU4N_bridge,PARAM_STYLE) {
+ 2: SU4N_DPRK_bridge;
+ 1: NU4N_JP_bridge;
+ SU4N_JP_bridge;
+}
+if(PARAM_CHIPS_A == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 2) && (PARAM_GAUGE != 1 && PARAM_GAUGE != 4)){
+item(FEAT_RAILTYPES, SU4N_ID, 3) {
+     property {
+         label: "SU4N";
+         name: string(STR_SU4N);
+         menu_text: string(STR_SU4N);
+         build_window_caption: string(STR_SU4N_BUILD_CAPTION);
+         autoreplace_text: string(STR_SU4N_AUTOREPLACE);
+         new_engine_text: string(STR_SU4N_NEW_ENGINE);
+   toolbar_caption: string(STR_SU4N_TB_CAPTION);
+         compatible_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x0B;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 8/4 : (PARAM_CONST == 1) ? 8/2 : (PARAM_CONST == 3) ? 8*2 : (PARAM_CONST == 4) ? 8*4 : 8;
+   maintenance_cost: (PARAM_MAINT == 0) ? 8/4 : (PARAM_MAINT == 1) ? 8/2 : (PARAM_MAINT == 3) ? 8*2 : (PARAM_MAINT == 4) ? 8*4 : 8;
+   sort_order: 0xB2;
+     }
+     graphics {
+         track_overlay: switch_SU4N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_SU4N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_S; // defines the usual tracks for crosings
+         bridge_surfaces: switch_SU4N_bridge; // defines the overlay drawn over bridges
+   gui: CHIPS_A_N_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+     }
+ }
+ }
+if(PARAM_ISR == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 1) && (PARAM_GAUGE != 1 && PARAM_GAUGE != 4)){
+item(FEAT_RAILTYPES, SU1E_ID, 4) {
+     property {
+         label: "SU1E";
+         name: string(STR_SU1E);
+         menu_text: string(STR_SU1E);
+         build_window_caption: string(STR_SU1E_BUILD_CAPTION);
+         autoreplace_text: string(STR_SU1E_AUTOREPLACE);
+         new_engine_text: string(STR_SU1E_NEW_ENGINE);
+   toolbar_caption: string(STR_SU1E_TB_CAPTION);
+         compatible_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0xC3;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 12/4 : (PARAM_CONST == 1) ? 12/2 : (PARAM_CONST == 3) ? 12*2 : (PARAM_CONST == 4) ? 12*4 : 12;
+   maintenance_cost: (PARAM_MAINT == 0) ? 14/4 : (PARAM_MAINT == 1) ? 14/2 : (PARAM_MAINT == 3) ? 14*2 : (PARAM_MAINT == 4) ? 14*4 : 14;
+   sort_order: 0xA1;
+         railtype_flags: bitmask(RAILTYPE_FLAG_CATENARY);
+     }
+     graphics {
+         track_overlay: switch_SU1N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_SU1N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_S; // defines the usual tracks for crosings
+         bridge_surfaces: switch_SU1N_bridge; // defines the overlay drawn over bridges
+   gui: ISR_E_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+         catenary_wire: switch_wires;
+         catenary_pylons: switch_poles;
+     }
+ }
+ }
+if(PARAM_CHIPS_C == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 1) && (PARAM_GAUGE != 1 && PARAM_GAUGE != 4)){
+item(FEAT_RAILTYPES, SU2E_ID, 5) {
+     property {
+         label: "SU2E";
+         name: string(STR_SU2E);
+         menu_text: string(STR_SU2E);
+         build_window_caption: string(STR_SU2E_BUILD_CAPTION);
+         autoreplace_text: string(STR_SU2E_AUTOREPLACE);
+         new_engine_text: string(STR_SU2E_NEW_ENGINE);
+   toolbar_caption: string(STR_SU2E_TB_CAPTION);
+         compatible_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0xC3;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 12/4 : (PARAM_CONST == 1) ? 12/2 : (PARAM_CONST == 3) ? 12*2 : (PARAM_CONST == 4) ? 12*4 : 12;
+   maintenance_cost: (PARAM_MAINT == 0) ? 14/4 : (PARAM_MAINT == 1) ? 14/2 : (PARAM_MAINT == 3) ? 14*2 : (PARAM_MAINT == 4) ? 14*4 : 14;
+   sort_order: 0xA7;
+         railtype_flags: bitmask(RAILTYPE_FLAG_CATENARY);
+     }
+     graphics {
+         track_overlay: switch_SU2N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_SU2N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_S; // defines the usual tracks for crosings
+         bridge_surfaces: switch_SU2N_bridge; // defines the overlay drawn over bridges
+   gui: CHIPS_C_E_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+         catenary_wire: switch_wires;
+         catenary_pylons: switch_poles;
+     }
+ }
+ }
+if(PARAM_CHIPS_D == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 1) && (PARAM_GAUGE != 1 && PARAM_GAUGE != 4)){
+item(FEAT_RAILTYPES, SU3E_ID, 6) {
+     property {
+         label: "SU3E";
+         name: string(STR_SU3E);
+         menu_text: string(STR_SU3E);
+         build_window_caption: string(STR_SU3E_BUILD_CAPTION);
+         autoreplace_text: string(STR_SU3E_AUTOREPLACE);
+         new_engine_text: string(STR_SU3E_NEW_ENGINE);
+   toolbar_caption: string(STR_SU3E_TB_CAPTION);
+         compatible_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0xC3;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 12/4 : (PARAM_CONST == 1) ? 12/2 : (PARAM_CONST == 3) ? 12*2 : (PARAM_CONST == 4) ? 12*4 : 12;
+   maintenance_cost: (PARAM_MAINT == 0) ? 14/4 : (PARAM_MAINT == 1) ? 14/2 : (PARAM_MAINT == 3) ? 14*2 : (PARAM_MAINT == 4) ? 14*4 : 14;
+   sort_order: 0xAD;
+         railtype_flags: bitmask(RAILTYPE_FLAG_CATENARY);
+     }
+     graphics {
+         track_overlay: switch_SU3N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_SU3N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_S; // defines the usual tracks for crosings
+         bridge_surfaces: switch_SU3N_bridge; // defines the overlay drawn over bridges
+   gui: CHIPS_D_E_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+         catenary_wire: switch_wires;
+         catenary_pylons: switch_poles;
+     }
+ }
+ }
+if(PARAM_CHIPS_A == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 1) && (PARAM_GAUGE != 1 && PARAM_GAUGE != 4)){
+item(FEAT_RAILTYPES, SU4E_ID, 7) {
+     property {
+         label: "SU4E";
+         name: string(STR_SU4E);
+         menu_text: string(STR_SU4E);
+         build_window_caption: string(STR_SU4E_BUILD_CAPTION);
+         autoreplace_text: string(STR_SU4E_AUTOREPLACE);
+         new_engine_text: string(STR_SU4E_NEW_ENGINE);
+   toolbar_caption: string(STR_SU4E_TB_CAPTION);
+         compatible_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0xC3;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 12/4 : (PARAM_CONST == 1) ? 12/2 : (PARAM_CONST == 3) ? 12*2 : (PARAM_CONST == 4) ? 12*4 : 12;
+   maintenance_cost: (PARAM_MAINT == 0) ? 14/4 : (PARAM_MAINT == 1) ? 14/2 : (PARAM_MAINT == 3) ? 14*2 : (PARAM_MAINT == 4) ? 14*4 : 14;
+   sort_order: 0xB3;
+         railtype_flags: bitmask(RAILTYPE_FLAG_CATENARY);
+     }
+     graphics {
+         track_overlay: switch_SU4N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_SU4N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_S; // defines the usual tracks for crosings
+         bridge_surfaces: switch_SU4N_bridge; // defines the overlay drawn over bridges
+   gui: CHIPS_A_E_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+         catenary_wire: switch_wires;
+         catenary_pylons: switch_poles;
+     }
+ }
+ }
+//DPRK
+spriteset (NU1N_DPRK_underlay, "grf/ISR_DPRK_N.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (NU1N_DPRK_overlay, "grf/ISR_DPRK_N.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (NU1N_DPRK_bridge, "grf/ISR_DPRK_N.png") {
+ tmpl_bridges_overlay()
+}
+//JP
+spriteset (NU1N_JP_underlay, "grf/ISR_JP_N.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (NU1N_JP_overlay, "grf/ISR_JP_N.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (NU1N_JP_bridge, "grf/ISR_JP_N.png") {
+ tmpl_bridges_overlay()
+}
+spriteset (NU1N_JP_F_underlay, "grf/ISR_JP_N_F.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (NU1N_JP_F_overlay, "grf/ISR_JP_N_F.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (NU1N_JP_F_bridge, "grf/ISR_JP_N_F.png") {
+ tmpl_bridges_overlay()
+}
+//Univ
+switch(FEAT_RAILTYPES, SELF, switch_NU1N_underlay,PARAM_STYLE) {
+ 2: NU1N_DPRK_underlay;
+ 1: NU1N_JP_F_underlay;
+ NU1N_JP_underlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_NU1N_overlay,PARAM_STYLE) {
+ 2: NU1N_DPRK_overlay;
+ 1: NU1N_JP_F_overlay;
+ NU1N_JP_overlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_NU1N_bridge,PARAM_STYLE) {
+ 2: NU1N_DPRK_bridge;
+ 1: NU1N_JP_F_bridge;
+ NU1N_JP_bridge;
+}
+if(PARAM_ISR == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 2) && (PARAM_GAUGE != 0 && PARAM_GAUGE != 4)){
+item(FEAT_RAILTYPES, NU1N_ID, 8) {
+     property {
+         label: "NU1N";
+         name: string(STR_NU1N);
+         menu_text: string(STR_NU1N);
+         build_window_caption: string(STR_NU1N_BUILD_CAPTION);
+         autoreplace_text: string(STR_NU1N_AUTOREPLACE);
+         new_engine_text: string(STR_NU1N_NEW_ENGINE);
+   toolbar_caption: string(STR_NU1N_TB_CAPTION);
+         compatible_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x0C;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 5/4 : (PARAM_CONST == 1) ? 5/2 : (PARAM_CONST == 3) ? 5*2 : (PARAM_CONST == 4) ? 5*4 : 5;
+   maintenance_cost: (PARAM_MAINT == 0) ? 4/4 : (PARAM_MAINT == 1) ? 4/2 : (PARAM_MAINT == 3) ? 4*2 : (PARAM_MAINT == 4) ? 4*4 : 4;
+   sort_order: 0xA2;
+     }
+     graphics {
+         track_overlay: switch_NU1N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_NU1N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_N; // defines the usual tracks for crosings
+         bridge_surfaces: switch_NU1N_bridge; // defines the overlay drawn over bridges
+   gui: ISR_N_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+     }
+ }
+ }
+//DPRK
+spriteset (NU2N_DPRK_underlay, "grf/CHIPS_C_DPRK_N.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (NU2N_DPRK_overlay, "grf/CHIPS_C_DPRK_N.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (NU2N_DPRK_bridge, "grf/CHIPS_C_DPRK_N.png") {
+ tmpl_bridges_overlay()
+}
+//JP
+spriteset (NU2N_JP_underlay, "grf/CHIPS_C_JP_N.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (NU2N_JP_overlay, "grf/CHIPS_C_JP_N.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (NU2N_JP_bridge, "grf/CHIPS_C_JP_N.png") {
+ tmpl_bridges_overlay()
+}
+spriteset (NU2N_JP_F_underlay, "grf/CHIPS_C_JP_N_F.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (NU2N_JP_F_overlay, "grf/CHIPS_C_JP_N_F.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (NU2N_JP_F_bridge, "grf/CHIPS_C_JP_N_F.png") {
+ tmpl_bridges_overlay()
+}
+//Univ
+switch(FEAT_RAILTYPES, SELF, switch_NU2N_underlay,PARAM_STYLE) {
+ 2: NU2N_DPRK_underlay;
+ 1: NU2N_JP_F_underlay;
+ NU2N_JP_underlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_NU2N_overlay,PARAM_STYLE) {
+ 2: NU2N_DPRK_overlay;
+ 1: NU2N_JP_F_overlay;
+ NU2N_JP_overlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_NU2N_bridge,PARAM_STYLE) {
+ 2: NU2N_DPRK_bridge;
+ 1: NU2N_JP_F_bridge;
+ NU2N_JP_bridge;
+}
+if(PARAM_CHIPS_C == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 2) && (PARAM_GAUGE != 0 && PARAM_GAUGE != 4)){
+item(FEAT_RAILTYPES, NU2N_ID, 9) {
+     property {
+         label: "NU2N";
+         name: string(STR_NU2N);
+         menu_text: string(STR_NU2N);
+         build_window_caption: string(STR_NU2N_BUILD_CAPTION);
+         autoreplace_text: string(STR_NU2N_AUTOREPLACE);
+         new_engine_text: string(STR_NU2N_NEW_ENGINE);
+   toolbar_caption: string(STR_NU2N_TB_CAPTION);
+         compatible_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x0C;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 5/4 : (PARAM_CONST == 1) ? 5/2 : (PARAM_CONST == 3) ? 5*2 : (PARAM_CONST == 4) ? 5*4 : 5;
+   maintenance_cost: (PARAM_MAINT == 0) ? 4/4 : (PARAM_MAINT == 1) ? 4/2 : (PARAM_MAINT == 3) ? 4*2 : (PARAM_MAINT == 4) ? 4*4 : 4;
+   sort_order: 0xA8;
+     }
+     graphics {
+         track_overlay: switch_NU2N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_NU2N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_N; // defines the usual tracks for crosings
+         bridge_surfaces: switch_NU2N_bridge; // defines the overlay drawn over bridges
+   gui: CHIPS_C_N_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+     }
+ }
+ }
+//DPRK
+spriteset (NU3N_DPRK_underlay, "grf/CHIPS_D_DPRK_N.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (NU3N_DPRK_overlay, "grf/CHIPS_D_DPRK_N.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (NU3N_DPRK_bridge, "grf/CHIPS_D_DPRK_N.png") {
+ tmpl_bridges_overlay()
+}
+//JP
+spriteset (NU3N_JP_underlay, "grf/CHIPS_D_JP_N.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (NU3N_JP_overlay, "grf/CHIPS_D_JP_N.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (NU3N_JP_bridge, "grf/CHIPS_D_JP_N.png") {
+ tmpl_bridges_overlay()
+}
+spriteset (NU3N_JP_F_underlay, "grf/CHIPS_D_JP_N_F.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (NU3N_JP_F_overlay, "grf/CHIPS_D_JP_N_F.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (NU3N_JP_F_bridge, "grf/CHIPS_D_JP_N_F.png") {
+ tmpl_bridges_overlay()
+}
+//Univ
+switch(FEAT_RAILTYPES, SELF, switch_NU3N_underlay,PARAM_STYLE) {
+ 2: NU3N_DPRK_underlay;
+ 1: NU3N_JP_F_underlay;
+ NU3N_JP_underlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_NU3N_overlay,PARAM_STYLE) {
+ 2: NU3N_DPRK_overlay;
+ 1: NU3N_JP_F_overlay;
+ NU3N_JP_overlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_NU3N_bridge,PARAM_STYLE) {
+ 2: NU3N_DPRK_bridge;
+ 1: NU3N_JP_F_bridge;
+ NU3N_JP_bridge;
+}
+if(PARAM_CHIPS_D == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 2) && (PARAM_GAUGE != 0 && PARAM_GAUGE != 4)){
+item(FEAT_RAILTYPES, NU3N_ID, 10) {
+     property {
+         label: "NU3N";
+         name: string(STR_NU3N);
+         menu_text: string(STR_NU3N);
+         build_window_caption: string(STR_NU3N_BUILD_CAPTION);
+         autoreplace_text: string(STR_NU3N_AUTOREPLACE);
+         new_engine_text: string(STR_NU3N_NEW_ENGINE);
+   toolbar_caption: string(STR_NU3N_TB_CAPTION);
+         compatible_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x0C;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 5/4 : (PARAM_CONST == 1) ? 5/2 : (PARAM_CONST == 3) ? 5*2 : (PARAM_CONST == 4) ? 5*4 : 5;
+   maintenance_cost: (PARAM_MAINT == 0) ? 4/4 : (PARAM_MAINT == 1) ? 4/2 : (PARAM_MAINT == 3) ? 4*2 : (PARAM_MAINT == 4) ? 4*4 : 4;
+   sort_order: 0xAE;
+     }
+     graphics {
+         track_overlay: switch_NU3N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_NU3N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_N; // defines the usual tracks for crosings
+         bridge_surfaces: switch_NU3N_bridge; // defines the overlay drawn over bridges
+   gui: CHIPS_D_N_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+     }
+ }
+ }
+//DPRK
+spriteset (NU4N_DPRK_underlay, "grf/CHIPS_A_DPRK_N.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (NU4N_DPRK_overlay, "grf/CHIPS_A_DPRK_N.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (NU4N_DPRK_bridge, "grf/CHIPS_A_DPRK_N.png") {
+ tmpl_bridges_overlay()
+}
+//JP
+spriteset (NU4N_JP_underlay, "grf/CHIPS_A_JP_N.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (NU4N_JP_overlay, "grf/CHIPS_A_JP_N.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (NU4N_JP_bridge, "grf/CHIPS_A_JP_N.png") {
+ tmpl_bridges_overlay()
+}
+spriteset (NU4N_JP_F_underlay, "grf/CHIPS_A_JP_N_F.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (NU4N_JP_F_overlay, "grf/CHIPS_A_JP_N_F.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (NU4N_JP_F_bridge, "grf/CHIPS_A_JP_N_F.png") {
+ tmpl_bridges_overlay()
+}
+//Univ
+switch(FEAT_RAILTYPES, SELF, switch_NU4N_underlay,PARAM_STYLE) {
+ 2: NU4N_DPRK_underlay;
+ 1: NU4N_JP_F_underlay;
+ NU4N_JP_underlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_NU4N_overlay,PARAM_STYLE) {
+ 2: NU4N_DPRK_overlay;
+ 1: NU4N_JP_F_overlay;
+ NU4N_JP_overlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_NU4N_bridge,PARAM_STYLE) {
+ 2: NU4N_DPRK_bridge;
+ 1: NU4N_JP_F_bridge;
+ NU4N_JP_bridge;
+}
+if(PARAM_CHIPS_A == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 2) && (PARAM_GAUGE != 0 && PARAM_GAUGE != 4)){
+item(FEAT_RAILTYPES, NU4N_ID, 11) {
+     property {
+         label: "NU4N";
+         name: string(STR_NU4N);
+         menu_text: string(STR_NU4N);
+         build_window_caption: string(STR_NU4N_BUILD_CAPTION);
+         autoreplace_text: string(STR_NU4N_AUTOREPLACE);
+         new_engine_text: string(STR_NU4N_NEW_ENGINE);
+   toolbar_caption: string(STR_NU4N_TB_CAPTION);
+         compatible_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x0C;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 5/4 : (PARAM_CONST == 1) ? 5/2 : (PARAM_CONST == 3) ? 5*2 : (PARAM_CONST == 4) ? 5*4 : 5;
+   maintenance_cost: (PARAM_MAINT == 0) ? 4/4 : (PARAM_MAINT == 1) ? 4/2 : (PARAM_MAINT == 3) ? 4*2 : (PARAM_MAINT == 4) ? 4*4 : 4;
+   sort_order: 0xB4;
+     }
+     graphics {
+         track_overlay: switch_NU4N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_NU4N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_N; // defines the usual tracks for crosings
+         bridge_surfaces: switch_NU4N_bridge; // defines the overlay drawn over bridges
+   gui: CHIPS_A_N_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+     }
+ }
+ }
+if(PARAM_ISR == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 1) && (PARAM_GAUGE != 0 && PARAM_GAUGE != 4)){
+item(FEAT_RAILTYPES, NU1E_ID, 12) {
+     property {
+         label: "NU1E";
+         name: string(STR_NU1E);
+         menu_text: string(STR_NU1E);
+         build_window_caption: string(STR_NU1E_BUILD_CAPTION);
+         autoreplace_text: string(STR_NU1E_AUTOREPLACE);
+         new_engine_text: string(STR_NU1E_NEW_ENGINE);
+   toolbar_caption: string(STR_NU1E_TB_CAPTION);
+         compatible_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x44;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 6/4 : (PARAM_CONST == 1) ? 6/2 : (PARAM_CONST == 3) ? 6*2 : (PARAM_CONST == 4) ? 6*4 : 6;
+   maintenance_cost: (PARAM_MAINT == 0) ? 5/4 : (PARAM_MAINT == 1) ? 5/2 : (PARAM_MAINT == 3) ? 5*2 : (PARAM_MAINT == 4) ? 5*4 : 5;
+   sort_order: 0xA3;
+         railtype_flags: bitmask(RAILTYPE_FLAG_CATENARY);
+     }
+     graphics {
+         track_overlay: switch_NU1N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_NU1N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_N; // defines the usual tracks for crosings
+         bridge_surfaces: switch_NU1N_bridge; // defines the overlay drawn over bridges
+   gui: ISR_E_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+         catenary_wire: switch_wires;
+         catenary_pylons: switch_poles;
+     }
+ }
+ }
+if(PARAM_CHIPS_C == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 1) && (PARAM_GAUGE != 0 && PARAM_GAUGE != 4)){
+item(FEAT_RAILTYPES, NU2E_ID, 13) {
+     property {
+         label: "NU2E";
+         name: string(STR_NU2E);
+         menu_text: string(STR_NU2E);
+         build_window_caption: string(STR_NU2E_BUILD_CAPTION);
+         autoreplace_text: string(STR_NU2E_AUTOREPLACE);
+         new_engine_text: string(STR_NU2E_NEW_ENGINE);
+   toolbar_caption: string(STR_NU2E_TB_CAPTION);
+         compatible_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x44;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 6/4 : (PARAM_CONST == 1) ? 6/2 : (PARAM_CONST == 3) ? 6*2 : (PARAM_CONST == 4) ? 6*4 : 6;
+   maintenance_cost: (PARAM_MAINT == 0) ? 5/4 : (PARAM_MAINT == 1) ? 5/2 : (PARAM_MAINT == 3) ? 5*2 : (PARAM_MAINT == 4) ? 5*4 : 5;
+   sort_order: 0xA9;
+         railtype_flags: bitmask(RAILTYPE_FLAG_CATENARY);
+     }
+     graphics {
+         track_overlay: switch_NU2N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_NU2N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_N; // defines the usual tracks for crosings
+         bridge_surfaces: switch_NU2N_bridge; // defines the overlay drawn over bridges
+   gui: CHIPS_C_E_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+         catenary_wire: switch_wires;
+         catenary_pylons: switch_poles;
+     }
+ }
+ }
+if(PARAM_CHIPS_D == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 1) && (PARAM_GAUGE != 0 && PARAM_GAUGE != 4)){
+item(FEAT_RAILTYPES, NU3E_ID, 14) {
+     property {
+         label: "NU3E";
+         name: string(STR_NU3E);
+         menu_text: string(STR_NU3E);
+         build_window_caption: string(STR_NU3E_BUILD_CAPTION);
+         autoreplace_text: string(STR_NU3E_AUTOREPLACE);
+         new_engine_text: string(STR_NU3E_NEW_ENGINE);
+   toolbar_caption: string(STR_NU3E_TB_CAPTION);
+         compatible_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x44;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 6/4 : (PARAM_CONST == 1) ? 6/2 : (PARAM_CONST == 3) ? 6*2 : (PARAM_CONST == 4) ? 6*4 : 6;
+   maintenance_cost: (PARAM_MAINT == 0) ? 5/4 : (PARAM_MAINT == 1) ? 5/2 : (PARAM_MAINT == 3) ? 5*2 : (PARAM_MAINT == 4) ? 5*4 : 5;
+   sort_order: 0xAF;
+         railtype_flags: bitmask(RAILTYPE_FLAG_CATENARY);
+     }
+     graphics {
+         track_overlay: switch_NU3N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_NU3N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_N; // defines the usual tracks for crosings
+         bridge_surfaces: switch_NU3N_bridge; // defines the overlay drawn over bridges
+   gui: CHIPS_D_E_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+         catenary_wire: switch_wires;
+         catenary_pylons: switch_poles;
+     }
+ }
+ }
+if(PARAM_CHIPS_A == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 1) && (PARAM_GAUGE != 0 && PARAM_GAUGE != 4)){
+item(FEAT_RAILTYPES, NU4E_ID, 15) {
+     property {
+         label: "NU4E";
+         name: string(STR_NU4E);
+         menu_text: string(STR_NU4E);
+         build_window_caption: string(STR_NU4E_BUILD_CAPTION);
+         autoreplace_text: string(STR_NU4E_AUTOREPLACE);
+         new_engine_text: string(STR_NU4E_NEW_ENGINE);
+   toolbar_caption: string(STR_NU4E_TB_CAPTION);
+         compatible_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x44;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 6/4 : (PARAM_CONST == 1) ? 6/2 : (PARAM_CONST == 3) ? 6*2 : (PARAM_CONST == 4) ? 6*4 : 6;
+   maintenance_cost: (PARAM_MAINT == 0) ? 5/4 : (PARAM_MAINT == 1) ? 5/2 : (PARAM_MAINT == 3) ? 5*2 : (PARAM_MAINT == 4) ? 5*4 : 5;
+   sort_order: 0xB5;
+         railtype_flags: bitmask(RAILTYPE_FLAG_CATENARY);
+     }
+     graphics {
+         track_overlay: switch_NU4N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_NU4N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_N; // defines the usual tracks for crosings
+         bridge_surfaces: switch_NU4N_bridge; // defines the overlay drawn over bridges
+   gui: CHIPS_A_E_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+         catenary_wire: switch_wires;
+         catenary_pylons: switch_poles;
+     }
+ }
+ }
+//DPRK
+spriteset (dU1N_DPRK_underlay, "grf/ISR_DPRK_D.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (dU1N_DPRK_overlay, "grf/ISR_DPRK_D.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (dU1N_DPRK_bridge, "grf/ISR_DPRK_D.png") {
+ tmpl_bridges_overlay()
+}
+//JP
+spriteset (dU1N_JP_underlay, "grf/ISR_JP_D.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (dU1N_JP_overlay, "grf/ISR_JP_D.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (dU1N_JP_bridge, "grf/ISR_JP_D.png") {
+ tmpl_bridges_overlay()
+}
+//Univ
+switch(FEAT_RAILTYPES, SELF, switch_dU1N_underlay,PARAM_STYLE) {
+ 2: dU1N_DPRK_underlay;
+ dU1N_JP_underlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_dU1N_overlay,PARAM_STYLE) {
+ 2: dU1N_DPRK_overlay;
+ dU1N_JP_overlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_dU1N_bridge,PARAM_STYLE) {
+ 2: dU1N_DPRK_bridge;
+ dU1N_JP_bridge;
+}
+if(PARAM_ISR == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 2) && (PARAM_GAUGE == 3 || PARAM_GAUGE == 4)){
+item(FEAT_RAILTYPES, dU1N_ID, 16) {
+     property {
+         label: "dU1N";
+         name: string(STR_dU1N);
+         menu_text: string(STR_dU1N);
+         build_window_caption: string(STR_dU1N_BUILD_CAPTION);
+         autoreplace_text: string(STR_dU1N_AUTOREPLACE);
+         new_engine_text: string(STR_dU1N_NEW_ENGINE);
+   toolbar_caption: string(STR_dU1N_TB_CAPTION);
+         compatible_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x0A;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 9/4 : (PARAM_CONST == 1) ? 9/2 : (PARAM_CONST == 3) ? 9*2 : (PARAM_CONST == 4) ? 9*4 : 9;
+   maintenance_cost: (PARAM_MAINT == 0) ? 9/4 : (PARAM_MAINT == 1) ? 9/2 : (PARAM_MAINT == 3) ? 9*2 : (PARAM_MAINT == 4) ? 9*4 : 9;
+   sort_order: 0xA4;
+     }
+     graphics {
+         track_overlay: switch_dU1N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_dU1N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_D; // defines the usual tracks for crosings
+         bridge_surfaces: switch_dU1N_bridge; // defines the overlay drawn over bridges
+   gui: ISR_N_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+     }
+ }
+ }
+//DPRK
+spriteset (dU2N_DPRK_underlay, "grf/CHIPS_C_DPRK_D.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (dU2N_DPRK_overlay, "grf/CHIPS_C_DPRK_D.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (dU2N_DPRK_bridge, "grf/CHIPS_C_DPRK_D.png") {
+ tmpl_bridges_overlay()
+}
+//JP
+spriteset (dU2N_JP_underlay, "grf/CHIPS_C_JP_D.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (dU2N_JP_overlay, "grf/CHIPS_C_JP_D.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (dU2N_JP_bridge, "grf/CHIPS_C_JP_D.png") {
+ tmpl_bridges_overlay()
+}
+//Univ
+switch(FEAT_RAILTYPES, SELF, switch_dU2N_underlay,PARAM_STYLE) {
+ 2: dU2N_DPRK_underlay;
+ dU2N_JP_underlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_dU2N_overlay,PARAM_STYLE) {
+ 2: dU2N_DPRK_overlay;
+ dU2N_JP_overlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_dU2N_bridge,PARAM_STYLE) {
+ 2: dU2N_DPRK_bridge;
+ dU2N_JP_bridge;
+}
+if(PARAM_CHIPS_C == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 2) && (PARAM_GAUGE == 3 || PARAM_GAUGE == 4)){
+item(FEAT_RAILTYPES, dU2N_ID, 17) {
+     property {
+         label: "dU2N";
+         name: string(STR_dU2N);
+         menu_text: string(STR_dU2N);
+         build_window_caption: string(STR_dU2N_BUILD_CAPTION);
+         autoreplace_text: string(STR_dU2N_AUTOREPLACE);
+         new_engine_text: string(STR_dU2N_NEW_ENGINE);
+   toolbar_caption: string(STR_dU2N_TB_CAPTION);
+         compatible_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x0A;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 9/4 : (PARAM_CONST == 1) ? 9/2 : (PARAM_CONST == 3) ? 9*2 : (PARAM_CONST == 4) ? 9*4 : 9;
+   maintenance_cost: (PARAM_MAINT == 0) ? 9/4 : (PARAM_MAINT == 1) ? 9/2 : (PARAM_MAINT == 3) ? 9*2 : (PARAM_MAINT == 4) ? 9*4 : 9;
+   sort_order: 0xAA;
+     }
+     graphics {
+         track_overlay: switch_dU2N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_dU2N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_D; // defines the usual tracks for crosings
+         bridge_surfaces: switch_dU2N_bridge; // defines the overlay drawn over bridges
+   gui: CHIPS_C_N_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+     }
+ }
+ }
+//DPRK
+spriteset (dU3N_DPRK_underlay, "grf/CHIPS_D_DPRK_D.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (dU3N_DPRK_overlay, "grf/CHIPS_D_DPRK_D.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (dU3N_DPRK_bridge, "grf/CHIPS_D_DPRK_D.png") {
+ tmpl_bridges_overlay()
+}
+//JP
+spriteset (dU3N_JP_underlay, "grf/CHIPS_D_JP_D.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (dU3N_JP_overlay, "grf/CHIPS_D_JP_D.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (dU3N_JP_bridge, "grf/CHIPS_D_JP_D.png") {
+ tmpl_bridges_overlay()
+}
+//Univ
+switch(FEAT_RAILTYPES, SELF, switch_dU3N_underlay,PARAM_STYLE) {
+ 2: dU3N_DPRK_underlay;
+ dU3N_JP_underlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_dU3N_overlay,PARAM_STYLE) {
+ 2: dU3N_DPRK_overlay;
+ dU3N_JP_overlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_dU3N_bridge,PARAM_STYLE) {
+ 2: dU3N_DPRK_bridge;
+ dU3N_JP_bridge;
+}
+if(PARAM_CHIPS_D == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 2) && (PARAM_GAUGE == 3 || PARAM_GAUGE == 4)){
+item(FEAT_RAILTYPES, dU3N_ID, 18) {
+     property {
+         label: "dU3N";
+         name: string(STR_dU3N);
+         menu_text: string(STR_dU3N);
+         build_window_caption: string(STR_dU3N_BUILD_CAPTION);
+         autoreplace_text: string(STR_dU3N_AUTOREPLACE);
+         new_engine_text: string(STR_dU3N_NEW_ENGINE);
+   toolbar_caption: string(STR_dU3N_TB_CAPTION);
+         compatible_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x0A;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 9/4 : (PARAM_CONST == 1) ? 9/2 : (PARAM_CONST == 3) ? 9*2 : (PARAM_CONST == 4) ? 9*4 : 9;
+   maintenance_cost: (PARAM_MAINT == 0) ? 9/4 : (PARAM_MAINT == 1) ? 9/2 : (PARAM_MAINT == 3) ? 9*2 : (PARAM_MAINT == 4) ? 9*4 : 9;
+   sort_order: 0xB0;
+     }
+     graphics {
+         track_overlay: switch_dU3N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_dU3N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_D; // defines the usual tracks for crosings
+         bridge_surfaces: switch_dU3N_bridge; // defines the overlay drawn over bridges
+   gui: CHIPS_D_N_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+     }
+ }
+ }
+//DPRK
+spriteset (dU4N_DPRK_underlay, "grf/CHIPS_A_DPRK_D.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (dU4N_DPRK_overlay, "grf/CHIPS_A_DPRK_D.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (dU4N_DPRK_bridge, "grf/CHIPS_A_DPRK_D.png") {
+ tmpl_bridges_overlay()
+}
+//JP
+spriteset (dU4N_JP_underlay, "grf/CHIPS_A_JP_D.png") {
+ tmpl_underlay_track_types()
+}
+spriteset (dU4N_JP_overlay, "grf/CHIPS_A_JP_D.png") {
+ tmpl_overlay_track_types()
+}
+spriteset (dU4N_JP_bridge, "grf/CHIPS_A_JP_D.png") {
+ tmpl_bridges_overlay()
+}
+//Univ
+switch(FEAT_RAILTYPES, SELF, switch_dU4N_underlay,PARAM_STYLE) {
+ 2: dU4N_DPRK_underlay;
+ dU4N_JP_underlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_dU4N_overlay,PARAM_STYLE) {
+ 2: dU4N_DPRK_overlay;
+ dU4N_JP_overlay;
+}
+switch(FEAT_RAILTYPES, SELF, switch_dU4N_bridge,PARAM_STYLE) {
+ 2: dU4N_DPRK_bridge;
+ dU4N_JP_bridge;
+}
+if(PARAM_CHIPS_A == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 2) && (PARAM_GAUGE == 3 || PARAM_GAUGE == 4)){
+item(FEAT_RAILTYPES, dU4N_ID, 19) {
+     property {
+         label: "dU4N";
+         name: string(STR_dU4N);
+         menu_text: string(STR_dU4N);
+         build_window_caption: string(STR_dU4N_BUILD_CAPTION);
+         autoreplace_text: string(STR_dU4N_AUTOREPLACE);
+         new_engine_text: string(STR_dU4N_NEW_ENGINE);
+   toolbar_caption: string(STR_dU4N_TB_CAPTION);
+         compatible_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x0A;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 9/4 : (PARAM_CONST == 1) ? 9/2 : (PARAM_CONST == 3) ? 9*2 : (PARAM_CONST == 4) ? 9*4 : 9;
+   maintenance_cost: (PARAM_MAINT == 0) ? 9/4 : (PARAM_MAINT == 1) ? 9/2 : (PARAM_MAINT == 3) ? 9*2 : (PARAM_MAINT == 4) ? 9*4 : 9;
+   sort_order: 0xB6;
+     }
+     graphics {
+         track_overlay: switch_dU4N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_dU4N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_D; // defines the usual tracks for crosings
+         bridge_surfaces: switch_dU4N_bridge; // defines the overlay drawn over bridges
+   gui: CHIPS_A_N_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+     }
+ }
+ }
+if(PARAM_ISR == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 1) && (PARAM_GAUGE == 3 || PARAM_GAUGE == 4)){
+item(FEAT_RAILTYPES, dU1E_ID, 20) {
+     property {
+         label: "dU1E";
+         name: string(STR_dU1E);
+         menu_text: string(STR_dU1E);
+         build_window_caption: string(STR_dU1E_BUILD_CAPTION);
+         autoreplace_text: string(STR_dU1E_AUTOREPLACE);
+         new_engine_text: string(STR_dU1E_NEW_ENGINE);
+   toolbar_caption: string(STR_dU1E_TB_CAPTION);
+         compatible_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x42;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 13/4 : (PARAM_CONST == 1) ? 13/2 : (PARAM_CONST == 3) ? 13*2 : (PARAM_CONST == 4) ? 13*4 : 13;
+   maintenance_cost: (PARAM_MAINT == 0) ? 15/4 : (PARAM_MAINT == 1) ? 15/2 : (PARAM_MAINT == 3) ? 15*2 : (PARAM_MAINT == 4) ? 15*4 : 15;
+   sort_order: 0xA5;
+         railtype_flags: bitmask(RAILTYPE_FLAG_CATENARY);
+     }
+     graphics {
+         track_overlay: switch_dU1N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_dU1N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_D; // defines the usual tracks for crosings
+         bridge_surfaces: switch_dU1N_bridge; // defines the overlay drawn over bridges
+   gui: ISR_E_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+         catenary_wire: switch_wires;
+         catenary_pylons: switch_poles;
+     }
+ }
+ }
+if(PARAM_CHIPS_C == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 1) && (PARAM_GAUGE == 3 || PARAM_GAUGE == 4)){
+item(FEAT_RAILTYPES, dU2E_ID, 21) {
+     property {
+         label: "dU2E";
+         name: string(STR_dU2E);
+         menu_text: string(STR_dU2E);
+         build_window_caption: string(STR_dU2E_BUILD_CAPTION);
+         autoreplace_text: string(STR_dU2E_AUTOREPLACE);
+         new_engine_text: string(STR_dU2E_NEW_ENGINE);
+   toolbar_caption: string(STR_dU2E_TB_CAPTION);
+         compatible_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x42;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 13/4 : (PARAM_CONST == 1) ? 13/2 : (PARAM_CONST == 3) ? 13*2 : (PARAM_CONST == 4) ? 13*4 : 13;
+   maintenance_cost: (PARAM_MAINT == 0) ? 15/4 : (PARAM_MAINT == 1) ? 15/2 : (PARAM_MAINT == 3) ? 15*2 : (PARAM_MAINT == 4) ? 15*4 : 15;
+   sort_order: 0xAB;
+         railtype_flags: bitmask(RAILTYPE_FLAG_CATENARY);
+     }
+     graphics {
+         track_overlay: switch_dU2N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_dU2N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_D; // defines the usual tracks for crosings
+         bridge_surfaces: switch_dU2N_bridge; // defines the overlay drawn over bridges
+   gui: CHIPS_C_E_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+         catenary_wire: switch_wires;
+         catenary_pylons: switch_poles;
+     }
+ }
+ }
+if(PARAM_CHIPS_D == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 1) && (PARAM_GAUGE == 3 || PARAM_GAUGE == 4)){
+item(FEAT_RAILTYPES, dU3E_ID, 22) {
+     property {
+         label: "dU3E";
+         name: string(STR_dU3E);
+         menu_text: string(STR_dU3E);
+         build_window_caption: string(STR_dU3E_BUILD_CAPTION);
+         autoreplace_text: string(STR_dU3E_AUTOREPLACE);
+         new_engine_text: string(STR_dU3E_NEW_ENGINE);
+   toolbar_caption: string(STR_dU3E_TB_CAPTION);
+         compatible_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x42;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 13/4 : (PARAM_CONST == 1) ? 13/2 : (PARAM_CONST == 3) ? 13*2 : (PARAM_CONST == 4) ? 13*4 : 13;
+   maintenance_cost: (PARAM_MAINT == 0) ? 15/4 : (PARAM_MAINT == 1) ? 15/2 : (PARAM_MAINT == 3) ? 15*2 : (PARAM_MAINT == 4) ? 15*4 : 15;
+   sort_order: 0xB1;
+         railtype_flags: bitmask(RAILTYPE_FLAG_CATENARY);
+     }
+     graphics {
+         track_overlay: switch_dU3N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_dU3N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_D; // defines the usual tracks for crosings
+         bridge_surfaces: switch_dU3N_bridge; // defines the overlay drawn over bridges
+   gui: CHIPS_D_E_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+         catenary_wire: switch_wires;
+         catenary_pylons: switch_poles;
+     }
+ }
+ }
+if(PARAM_CHIPS_A == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 1) && (PARAM_GAUGE == 3 || PARAM_GAUGE == 4)){
+item(FEAT_RAILTYPES, dU4E_ID, 23) {
+     property {
+         label: "dU4E";
+         name: string(STR_dU4E);
+         menu_text: string(STR_dU4E);
+         build_window_caption: string(STR_dU4E_BUILD_CAPTION);
+         autoreplace_text: string(STR_dU4E_AUTOREPLACE);
+         new_engine_text: string(STR_dU4E_NEW_ENGINE);
+   toolbar_caption: string(STR_dU4E_TB_CAPTION);
+         compatible_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         powered_railtype_list: ["ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+   alternative_railtype_list: ["ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+         speed_limit: (PARAM_SPEED == 0) ? 121 : 0 km/h;
+         introduction_date: date(1800,1,1);
+   map_colour: 0x42;
+         station_graphics: RAILTYPE_STATION_NORMAL;
+         acceleration_model: ACC_MODEL_RAIL;
+         construction_cost: (PARAM_CONST == 0) ? 13/4 : (PARAM_CONST == 1) ? 13/2 : (PARAM_CONST == 3) ? 13*2 : (PARAM_CONST == 4) ? 13*4 : 13;
+   maintenance_cost: (PARAM_MAINT == 0) ? 15/4 : (PARAM_MAINT == 1) ? 15/2 : (PARAM_MAINT == 3) ? 15*2 : (PARAM_MAINT == 4) ? 15*4 : 15;
+   sort_order: 0xB7;
+         railtype_flags: bitmask(RAILTYPE_FLAG_CATENARY);
+     }
+     graphics {
+         track_overlay: switch_dU4N_overlay; // defines the sprites drawn as overlay for junctions and highlight
+         underlay: switch_dU4N_underlay; // defines the usual tracks and the underlay for junctions
+         level_crossings: switch_cross_D; // defines the usual tracks for crosings
+         bridge_surfaces: switch_dU4N_bridge; // defines the overlay drawn over bridges
+   gui: CHIPS_A_E_gui; // defines the gui sprites
+         fences: NO_fences; // Custom Fences since v2
+         catenary_wire: switch_wires;
+         catenary_pylons: switch_poles;
+     }
+ }
+ }
+
+item(FEAT_RAILTYPES) {
+    property {
+        label: "RAIL";
+        compatible_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+  powered_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+    }
+}
+item(FEAT_RAILTYPES) {
+    property {
+        label: "ELRL";
+        compatible_railtype_list: ["RAIL", "SAAN", "SABN", "SACN", "SADN", "SAEN", "SBAN", "SBBN", "SBCN", "SBDN", "SBEN", "SCAN", "SCBN", "SCCN", "SCDN", "SCEN", "SUAN", "SUBN", "SUUN", "SUDN", "SUEN", "SU1N", "SU2N", "SU3N", "SU4N", "SU5N", "ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+  powered_railtype_list: ["ELRL", "SAAE", "SABE", "SACE", "SADE", "SAEE", "SBAE", "SBBE", "SBCE", "SBDE", "SBEE", "SCAE", "SCBE", "SCCE", "SCDE", "SCEE", "SUAE", "SUBE", "SUUE", "SUDE", "SUEE", "SU1E", "SU2E", "SU3E", "SU4E", "SU5E", "SAAD", "SABD", "SACD", "SADD", "SAED", "SBAD", "SBBD", "SBCD", "SBDD", "SBED", "SCAD", "SCBD", "SCCD", "SCDD", "SCED", "SUAD", "SUBD", "SUUD", "SUDD", "SUED", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+    }
+}
+item(FEAT_RAILTYPES) {
+    property {
+        label: "NAAN";
+        compatible_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+  powered_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+    }
+}
+item(FEAT_RAILTYPES) {
+    property {
+        label: "NABE";
+        compatible_railtype_list: ["NAAN", "NABN", "NACN", "NADN", "NAEN", "NAKN", "NBAN", "NBBN", "NBCN", "NBDN", "NBEN", "NBKN", "NCAN", "NCBN", "NCCN", "NCDN", "NCEN", "NCKN", "NUAN", "NUBN", "NUUN", "NUDN", "NUEN", "NU1N", "NU2N", "NU3N", "NU4N", "NU5N", "NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAN", "dABN", "dACN", "dADN", "dAEN", "dBAN", "dBBN", "dBCN", "dBDN", "dBEN", "dCAN", "dCBN", "dCCN", "dCDN", "dCEN", "dUAN", "dUBN", "dUUN", "dUDN", "dUEN", "dU1N", "dU2N", "dU3N", "dU4N", "dU5N", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+  powered_railtype_list: ["NAAE", "NABE", "NACE", "NADE", "NAEE", "NAKE", "NBAE", "NBBE", "NBCE", "NBDE", "NBEE", "NBKE", "NCAE", "NCBE", "NCCE", "NCDE", "NCEE", "NCKE", "NUAE", "NUBE", "NUUE", "NUDE", "NUEE", "NU1E", "NU2E", "NU3E", "NU4E", "NU5E", "NAAd", "NABd", "NACd", "NAdd", "NAEd", "NAKd", "NBAd", "NBBd", "NBCd", "NBdd", "NBEd", "NBKd", "NCAd", "NCBd", "NCCd", "NCdd", "NCEd", "NCKd", "NUAd", "NUBd", "NUUd", "NUdd", "NUEd", "dAAE", "dABE", "dACE", "dADE", "dAEE", "dBAE", "dBBE", "dBCE", "dBDE", "dBEE", "dCAE", "dCBE", "dCCE", "dCDE", "dCEE", "dUAE", "dUBE", "dUUE", "dUDE", "dUEE", "dU1E", "dU2E", "dU3E", "dU4E", "dU5E", "dAAD", "dABD", "dACD", "dADD", "dAED", "dBAD", "dBBD", "dBCD", "dBDD", "dBED", "dCAD", "dCBD", "dCCD", "dCDD", "dCED", "dUAD", "dUBD", "dUUD", "dUDD", "dUED", "dAAd", "dABd", "dACd", "dADd", "dAEd", "dBAd", "dBBd", "dBCd", "dBDd", "dBEd", "dCAd", "dCBd", "dCCd", "dCDd", "dCEd", "dUAd", "dUBd", "dUUd", "dUDd", "dUEd"];
+    }
+}
+
