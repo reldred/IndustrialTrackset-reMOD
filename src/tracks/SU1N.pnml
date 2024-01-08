@@ -35,6 +35,11 @@ switch(FEAT_RAILTYPES, SELF, switch_SU1N_bridge,PARAM_STYLE) {
 	SU1N_JP_bridge;
 }
 
+switch(FEAT_RAILTYPES, SELF, sw_SU1N_fence, PARAM_FENCE){
+	0: NO_fences;
+	1: old_fences;
+}
+
 if(PARAM_ISR == 1 && (PARAM_ELEC == 0 || PARAM_ELEC == 2) && (PARAM_GAUGE != 1 && PARAM_GAUGE != 4)){
 item(FEAT_RAILTYPES, SU1N_ID, 0) {
      property {
@@ -63,7 +68,7 @@ item(FEAT_RAILTYPES, SU1N_ID, 0) {
          level_crossings:			switch_cross_S;				// defines the usual tracks for crosings
          bridge_surfaces:	switch_SU1N_bridge;					// defines the overlay drawn over bridges
 		 gui:				ISR_N_gui;							// defines the gui sprites
-         fences:         	NO_fences;       					// Custom Fences since v2
+         fences:         	sw_SU1N_fence;       					// Custom Fences since v2
      }
  }
  }

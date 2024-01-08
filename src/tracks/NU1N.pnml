@@ -72,7 +72,7 @@ item(FEAT_RAILTYPES, NU1N_ID, 8) {
          level_crossings:			switch_cross_N;				// defines the usual tracks for crosings
          bridge_surfaces:	switch_NU1N_bridge;					// defines the overlay drawn over bridges
 		 gui:				ISR_N_gui;							// defines the gui sprites
-         fences:         	NO_fences;       					// Custom Fences since v2
+         fences:         	sw_SU1N_fence;       					// Custom Fences since v2
      }
  }
  }

@@ -2,9 +2,20 @@
 #include "src/template.pnml"
 #include "src/tt-table.pnml"
 #include "src/gui.pnml"
+
+spriteset (mod_fences, "grf/NewFences.png") {
+	tmpl_new_fences(0,0)
+}
+spriteset (reg_fences, "grf/NewFences.png") {
+	tmpl_new_fences(0,50)
+}
+spriteset (old_fences, "grf/NewFences.png") {
+	tmpl_new_fences(0,100)
+}
 spriteset (NO_fences, "grf/ISR_DPRK_S.png") {
 	tmpl_no_fences()
 }
+
 #include "src/tracks/SU1N.pnml"
 #include "src/tracks/SU2N.pnml"
 #include "src/tracks/SU3N.pnml"

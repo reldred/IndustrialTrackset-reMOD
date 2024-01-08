@@ -27,7 +27,7 @@ item(FEAT_RAILTYPES, NU3E_ID, 14) {
          level_crossings:			switch_cross_N;				// defines the usual tracks for crosings
          bridge_surfaces:	switch_NU3N_bridge;					// defines the overlay drawn over bridges
 		 gui:				CHIPS_D_E_gui;							// defines the gui sprites
-         fences:         	NO_fences;       					// Custom Fences since v2
+         fences:         	sw_SU1N_fence;       					// Custom Fences since v2
          catenary_wire:		switch_wires;
          catenary_pylons:		switch_poles;
      }

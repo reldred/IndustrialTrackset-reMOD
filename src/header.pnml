@@ -1,7 +1,7 @@
 #define COSTPARAM(basecost,param) (param == 0) ? basecost/4 : (param == 1) ? basecost/2 : (param == 3) ? basecost*2 : (param == 4) ? basecost*4 : basecost
 
 grf {
-	grfid:	"EN\0E\01";
+	grfid:	"RJE\1C";
 	name:	string(STR_GRF_NAME);
 	desc:	string(STR_GRF_DESC);
 	version:	5;

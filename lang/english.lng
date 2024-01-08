@@ -2,8 +2,8 @@
 # 0x01 -> English
 
 # General GRF strings
-STR_GRF_NAME	:Industrial Track Set 1.5
-STR_GRF_DESC	:A trackset for use with CHIPS, FIRS and ISR. Designed for visual compatibility with JapanSet Tracks and DPRK tracks. {}{BLACK} {}{COPYRIGHT}2021-2022 Erato Nysiad{}License:GPL v2{}Credit:{}{BLACK}Japan Set Tracks: {SILVER}Dandan, Emperor Jake et al.{}{BLACK}DPRK tracks: {SILVER}Erato{}{BLACK}ISR: {SILVER}Sanchimaru et al.{}{BLACK}CHIPS: {SILVER}andythenorth et al.{}
+STR_GRF_NAME	:Industrial Track Set 1.5 reMOD
+STR_GRF_DESC	:A trackset for use with CHIPS, FIRS and ISR. Designed for visual compatibility with JapanSet Tracks and DPRK tracks. {}{BLACK} {}{COPYRIGHT}2021-2022 Erato Nysiad{}Additional modifications 2023-2024 by reldred{}License:GPL v2{}Credit:{}{BLACK}Japan Set Tracks: {SILVER}Dandan, Emperor Jake et al.{}{BLACK}DPRK tracks: {SILVER}Erato{}{BLACK}ISR: {SILVER}Sanchimaru et al.{}{BLACK}CHIPS: {SILVER}andythenorth et al.{}
 
 # Track strings
 STR_SU1E 				:Standard Gauge ISR {LTBLUE}(Electrified){WHITE}

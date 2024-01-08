@@ -245,6 +245,26 @@ template tmpl_fences(y) {
 	[350,  y, 33,30,  0, -15]
 }
 
+// Fence. Updated template from Korean Track set by SerpensNebula https://github.com/SerpensNebula using graphics supplied by EmperorJake of the JP+ goon squad.
+template tmpl_new_fences (x, y) {
+    [ x,      y,      32,      25,     -33,     -11]
+    [ x+40,   y,      32,      25,       3,     -11]
+    [ x+80,   y,       8,      39,      -3,     -24]
+    [ x+100,  y,      64,      12,     -31,     -12]
+    [ x+170,  y,      32,      17,     -33,     -10]
+    [ x+210,  y,      32,      17,       3,     -10]
+    [ x+250,  y,      32,      35,     -33,     -20]
+    [ x+290,  y,      32,      35,       3,     -20]
+    [ x,      y,      32,      25,     -29,      -9]
+    [ x+40,   y,      32,      25,      -1,      -9]
+    [ x+330,  y,       8,      39,      -3,     -24]
+    [ x+100,  y,      64,      12,     -31,     -12]
+    [ x+170,  y,      32,      17,     -29,      -8]
+    [ x+210,  y,      32,      17,      -1,      -8]
+    [ x+250,  y,      32,      35,     -29,     -18]
+    [ x+290,  y,      32,      35,      -1,     -18]
+}
+
 // gui
 template tmpl_gui() {
 	[  0,  0, 20, 20, 0, 0]
